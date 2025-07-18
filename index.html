@@ -5,32 +5,22 @@
         <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-        <title>NoPaste - No-database paste service</title>
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="https://cdn.jsdelivr.net/combine/
-npm/bootstrap@4.6.1/dist/css/bootstrap-grid.min.css,
-npm/slim-select@1.27.1/dist/slimselect.min.css,
-npm/codemirror@5.65.5/lib/codemirror.min.css,
-npm/codemirror@5.65.5/addon/scroll/simplescrollbars.css,
-npm/codemirror@5.65.5/theme/dracula.min.css,
-npm/microtip@0.2.2/microtip.min.css
-"
-        />
-        <link rel="stylesheet" href="style.css" />
-        <link href="favicon.ico" rel="icon" type="image/x-icon" />
-        <link rel="canonical" href="https://nopaste.boris.sh/" />
+        <title>NoPaste - Blender Projects</title>
+        <link rel="stylesheet" type="text/css" href="./deps.css" />
+        <link rel="stylesheet" href="./style.css" />
+        <link href="/favicon.ico" rel="icon" type="image/x-icon" />
+        <link rel="canonical" href="https://projects.blender.org/paste/" />
         <meta
             name="description"
             property="og:description"
             content="NoPaste is a client-side paste service which works with no database, and no back-end code. The data is stored entirely in the links and nowhere else"
         />
-        <meta property="og:title" content="NoPaste - No-database paste service" />
-        <meta property="og:image" content="https://cdn.jsdelivr.net/gh/bokub/nopaste@images/logo.png" />
-        <meta property="og:url" content="https://nopaste.boris.sh/" />
+        <meta property="og:title" content="NoPaste - Blender Projects" />
+        <meta property="og:image" content="./og.png" />
+        <meta property="og:url" content="https://projects.blender.org/paste/" />
         <meta property="og:type" content="website" />
     </head>
+
     <body class="m-0">
         <script>
             const readOnly = window.location !== window.parent.location || new URLSearchParams(window.location.search).has('readonly');
@@ -54,7 +44,7 @@ npm/microtip@0.2.2/microtip.min.css
         <div id="controls" class="container-fluid shadow-bottom hide-readonly">
             <div class="row align-items-center justify-content-end my-1">
                 <div class="col-auto mb-1">
-                    <h1 class="my-0"><span>{</span> NoPaste <span>}</span></h1>
+                    <h1 class="my-0"><span>{</span> Blender NoPaste <span>}</span></h1>
                 </div>
                 <div class="col-auto">
                     <a
@@ -64,9 +54,9 @@ npm/microtip@0.2.2/microtip.min.css
                         data-microtip-position="bottom"
                         role="tooltip"
                         data-micromodal-trigger="description-modal"
-                        >About</a
+                        >?</a
                     >
-                    <a href="https://github.com/bokub/nopaste" rel="noopener" target="_blank" class="mx-3">Source</a>
+                    <a href="https://github.com/blender/nopaste" rel="noopener" target="_blank" class="mx-3">GitHub</a>
                 </div>
                 <div class="col"></div>
                 <div class="col-auto my-1">
@@ -97,10 +87,10 @@ npm/microtip@0.2.2/microtip.min.css
                 </div>
                 <div class="col-auto">
                     <button class="py-1 px-2 mx-0 my-1" onclick="generateLink('url')" type="button">
-                        Generate link
+                        Link
                     </button>
                     <button class="py-1 px-2 mx-1 my-1" onclick="generateLink('markdown')" type="button">
-                        Generate markdown
+                        Markdown
                     </button>
                     <button class="py-1 px-2 mx-0 my-1" onclick="generateLink('iframe')" type="button">Embed</button>
                 </div>
@@ -164,19 +154,7 @@ npm/microtip@0.2.2/microtip.min.css
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/combine/
-npm/lzma@2.3.2/src/lzma.min.js,
-npm/slim-select@1.27.1/dist/slimselect.min.js,
-npm/clipboard@2.0.11/dist/clipboard.min.js,
-npm/micromodal@0.4.10/dist/micromodal.min.js,
-npm/codemirror@5.65.5,
-npm/codemirror@5.65.5/addon/mode/loadmode.min.js,
-npm/codemirror@5.65.5/addon/mode/overlay.min.js,
-npm/codemirror@5.65.5/addon/mode/multiplex.min.js,
-npm/codemirror@5.65.5/addon/mode/simple.min.js,
-npm/codemirror@5.65.5/addon/scroll/simplescrollbars.js,
-npm/codemirror@5.65.5/mode/meta.min.js
-"></script>
-        <script src="script.js"></script>
+        <script src="./deps.js"></script>
+        <script src="./script.js"></script>
     </body>
 </html>
