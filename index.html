@@ -68,7 +68,7 @@
                         data-microtip-position="bottom"
                         role="tooltip"
                     >
-                        <span class="icon-notes"></span>
+                        <span class="icon-wrap_text"></span>
                     </button>
                     <button
                         onclick="disableLineWrapping()"
@@ -79,17 +79,35 @@
                         role="tooltip"
                         class="hidden"
                     >
-                        <span class="icon-wrap-text"></span>
+                        <span class="icon-speaker_notes"></span>
                     </button>
-                </div>
-                <div class="col-auto">
-                    <button class="py-1 px-2 mx-0 my-1" onclick="generateLink('url')" type="button">
-                        Link
+                    <button
+                        onclick="generateLink('url')"
+                        type="button"
+                        aria-label="Generate URL"
+                        data-microtip-position="bottom"
+                        role="tooltip"
+                    >
+                        <span class="icon-insert_link"></span>
                     </button>
-                    <button class="py-1 px-2 mx-1 my-1" onclick="generateLink('markdown')" type="button">
-                        Markdown
+                    <button
+                        onclick="generateLink('markdown')"
+                        type="button"
+                        aria-label="General Markdown link"
+                        data-microtip-position="bottom"
+                        role="tooltip"
+                    >
+                        <span class="icon-markdown"></span>
                     </button>
-                    <button class="py-1 px-2 mx-0 my-1" onclick="generateLink('iframe')" type="button">Embed</button>
+                    <button
+                        onclick="generateLink('iframe')"
+                        type="button"
+                        aria-label="Embed"
+                        data-microtip-position="bottom"
+                        role="tooltip"
+                    >
+                        <span class="icon-filter_frames"></span>
+                    </button>
                 </div>
             </div>
         </div>
