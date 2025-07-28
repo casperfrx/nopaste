@@ -44,6 +44,20 @@ body.readonly:not(:hover) #footer {
     display: none;
 }
 
+a.unstyled,
+a.unstyled:visited,
+a.unstyled:hover,
+a.unstyled:active,
+a.unstyled:focus {
+  border-bottom: none !important;
+}
+
+@media (max-width: 767px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
+
 #copy-link {
     font-family: JetBrainsMono, sans-serif;
     width: 100%;
