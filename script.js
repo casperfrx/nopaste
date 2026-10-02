@@ -1,10 +1,14 @@
-const blob = new Blob(['importScripts("https://cdn.jsdelivr.net/npm/lzma@2.3.2/src/lzma_worker.min.js");']);
-const lzma = new LZMA(window.URL.createObjectURL(blob));
+// Resolved against <base href>, like every other asset
+const lzma = new LZMA('vendor/lzma/lzma_worker.min.js');
+
+// Provided by editor/editor.js (CodeMirror 6 bundle, see tools/src/editor.js)
+const { createEditor, languages } = window.NoPasteEditor;
 
 let editor = null;
 let select = null;
 let clipboard = null;
 let statsEl = null;
+let languageByCode = null;
 
 const init = () => {
     handleLegacyUrl();
@@ -16,45 +20,50 @@ const init = () => {
 };
 
 const initCodeEditor = () => {
-    CodeMirror.modeURL = 'https://cdn.jsdelivr.net/npm/codemirror@5.65.5/mode/%N/%N.js';
-    editor = new CodeMirror(byId('editor'), {
-        lineNumbers: true,
-        theme: 'dracula',
+    statsEl = byId('stats');
+    editor = createEditor(byId('editor'), {
         readOnly: readOnly,
-        lineWrapping: false,
-        scrollbarStyle: 'simple',
+        onChange: () => {
+            statsEl.innerHTML = `Length: ${editor.length()} |  Lines: ${editor.lineCount()}`;
+            hideCopyBar();
+        },
     });
     if (readOnly) {
         document.body.classList.add('readonly');
     }
-
-    statsEl = byId('stats');
-    editor.on('change', () => {
-        statsEl.innerHTML = `Length: ${editor.getValue().length} |  Lines: ${editor['doc'].size}`;
-        hideCopyBar();
-    });
 };
 
 const initLangSelector = () => {
+    languageByCode = new Map(languages.map((language) => [shorten(language.name), language]));
     select = new SlimSelect({
         select: '#language',
-        data: CodeMirror.modeInfo.map((e) => ({
-            text: e.name,
-            value: shorten(e.name),
-            data: { mime: e.mime, mode: e.mode },
+        data: languages.map((language) => ({
+            text: language.name,
+            value: shorten(language.name),
         })),
-        showContent: 'down',
-        onChange: (e) => {
-            const language = e.data || { mime: null, mode: null };
-            editor.setOption('mode', language.mime);
-            CodeMirror.autoLoadMode(editor, language.mode);
-            document.title = e.text && e.text !== 'Plain Text' ? `NoPaste - ${e.text} code snippet` : 'NoPaste';
+        settings: {
+            openPosition: 'down',
+            modal: 'off', // keep the dropdown on mobile too (default would be a full-screen modal)
+            focusSearch: true,
+            searchPlaceholder: 'Search',
+        },
+        events: {
+            afterChange: (selected) => setLanguage(selected[0] && selected[0].value),
         },
     });
 
     // Set lang selector
     const l = new URLSearchParams(window.location.search).get('l');
-    select.set(l ? decodeURIComponent(l) : shorten('Plain Text'));
+    const code = l ? decodeURIComponent(l) : shorten('Plain Text');
+    select.setSelected(languageByCode.has(code) ? code : shorten('Plain Text'), false);
+    setLanguage(select.getSelected()[0]);
+};
+
+const setLanguage = (code) => {
+    const language = languageByCode.get(code);
+    const name = language ? language.name : '';
+    editor.setLanguage(language).catch((err) => console.error(`Failed to load language ${name}: ${err}`));
+    document.title = name && name !== 'Plain Text' ? `NoPaste - ${name} code snippet` : 'NoPaste';
 };
 
 const initCode = () => {
@@ -77,7 +86,7 @@ const handleLegacyUrl = () => {
     const base = `${location.protocol}//${location.host}`;
     if (location.hash.charAt(5) === '-') {
         const hashedLang = location.hash.substr(1, 4);
-        const newLang = CodeMirror.modeInfo.find((e) => hash(e.name) === hashedLang);
+        const newLang = languages.find((e) => hash(e.name) === hashedLang);
         const queryParams = newLang ? '?l=' + shorten(newLang.name) : '';
         location.replace(`${base}/${queryParams}#${location.hash.substr(6)}`);
         throw new Error('waiting for page to reload');
@@ -144,13 +153,13 @@ const hideCopyBar = (success) => {
 const disableLineWrapping = () => {
     byId('disable-line-wrapping').classList.add('hidden');
     byId('enable-line-wrapping').classList.remove('hidden');
-    editor.setOption('lineWrapping', false);
+    editor.setLineWrapping(false);
 };
 
 const enableLineWrapping = () => {
     byId('enable-line-wrapping').classList.add('hidden');
     byId('disable-line-wrapping').classList.remove('hidden');
-    editor.setOption('lineWrapping', true);
+    editor.setLineWrapping(true);
 };
 
 const openInNewTab = () => {
@@ -160,13 +169,14 @@ const openInNewTab = () => {
 // Build a shareable URL
 const buildUrl = (rawData, mode) => {
     const base = `${location.protocol}//${location.host}${location.pathname}`;
-    const query = shorten('Plain Text') === select.selected() ? '' : `?l=${encodeURIComponent(select.selected())}`;
+    const selected = select.getSelected()[0];
+    const query = shorten('Plain Text') === selected ? '' : `?l=${encodeURIComponent(selected)}`;
     const url = base + query + '#' + rawData;
     if (mode === 'markdown') {
         return `[NoPaste snippet](${url})`;
     }
     if (mode === 'iframe') {
-        const height = editor['doc'].height + 45;
+        const height = editor.documentHeight() + 45;
         return `<iframe width="100%" height="${height}" frameborder="0" src="${url}"></iframe>`;
     }
     return url;
@@ -273,11 +283,10 @@ const hash = function (str, seed = 0) {
 
 // Only for tests purposes
 const testAllModes = () => {
-    for (const [index, language] of Object.entries(CodeMirror.modeInfo)) {
-        CodeMirror.autoLoadMode(editor, language.mode);
+    for (const [index, language] of Object.entries(languages)) {
         setTimeout(() => {
             console.info(language.name);
-            select.set(shorten(language.name));
+            select.setSelected(shorten(language.name));
         }, 1000 * index);
     }
 };

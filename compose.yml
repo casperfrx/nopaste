@@ -2,6 +2,6 @@ services:
   nopaste:
     build: .
     ports:
-      - 80:80
+      - "127.0.0.1:8080:80"
     healthcheck:
       test: wget --spider --quiet http://127.0.0.1:80/healthz

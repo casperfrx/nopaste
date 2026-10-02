@@ -1,3 +1,23 @@
+/* Keep the layout of the previous Bootstrap 4.6 grid build: Bootstrap 5 no longer sets a global border-box,
+   uses 24px gutters instead of 30px, and gives rows negative margins (the previous minified build had none) */
+
+html {
+    box-sizing: border-box;
+}
+*,
+::after,
+::before {
+    box-sizing: inherit;
+}
+.container-fluid,
+.row {
+    --bs-gutter-x: 30px;
+}
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
 /* App layout */
 
 html,
@@ -85,9 +105,30 @@ a:focus {
     border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-.CodeMirror {
+/* Editor (CodeMirror 6, theme in tools/src/editor.js) */
+#editor .cm-editor {
     height: 100%;
-    font-family: JetBrainsMono, sans-serif;
+}
+
+/* Thin scrollbars, like CodeMirror 5's "simple" scrollbar style */
+#editor .cm-scroller::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: #eee;
+}
+#editor .cm-scroller::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+}
+#editor .cm-scroller::-webkit-scrollbar-corner {
+    background-color: #eee;
+}
+@supports not selector(::-webkit-scrollbar) {
+    #editor .cm-scroller {
+        scrollbar-width: thin;
+        scrollbar-color: #ccc #eee;
+    }
 }
 h1 {
     font: normal 24px JetBrainsMono, sans-serif;
@@ -145,11 +186,60 @@ h1 {
 
 /* Form elements */
 
+/* Slim Select (themed through its CSS variables; the dropdown is appended to <body>) */
+:root {
+    --ss-primary-color: #5897fb;
+    --ss-bg-color: #282936;
+    --ss-font-color: #dedede;
+    --ss-placeholder-color: #8a8a8a;
+    --ss-border-color: #dcdee2;
+    --ss-main-height: 26px;
+    --ss-search-height: 30px;
+    --ss-option-height: 28px;
+    --ss-content-height: 246px;
+    --ss-spacing-l: 10px;
+    --ss-border-radius: 2px;
+}
+
 #controls .ss-main {
     width: 180px;
 }
 
-.ss-main .ss-single-selected,
+.ss-main .ss-arrow path {
+    stroke: #666;
+}
+.ss-content {
+    margin-top: -1px;
+    font-size: 14px;
+}
+.ss-content .ss-search {
+    flex-shrink: 0;
+    padding: 8px 8px 6px;
+    border-bottom: none;
+}
+.ss-content .ss-search input {
+    padding: 6px 8px;
+}
+.ss-content .ss-search input:focus {
+    box-shadow: 0 0 5px #5897fb;
+}
+.ss-content .ss-list .ss-option {
+    padding: 6px 10px;
+    color: #dedede;
+    content-visibility: visible; /* exact option offsets, so the selected language is scrolled into view on open */
+}
+.ss-content .ss-list .ss-option:not(.ss-disabled).ss-selected {
+    color: #dedede;
+    background-color: #3b3b47;
+}
+.ss-content .ss-list .ss-option.ss-highlighted,
+.ss-content .ss-list .ss-option:hover:not(.ss-disabled) {
+    color: #fff;
+    background-color: #5897fb;
+    border-left: none;
+}
+
+.ss-main,
 button,
 input[type='text'],
 input[type='search'] {
@@ -176,20 +266,11 @@ button {
 button:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
 }
-.ss-content {
-    background-color: #282936;
-    color: #dedede;
-    font-size: 14px;
-}
-.ss-content .ss-disabled {
-    background-color: #3b3b47 !important;
-}
 
 /* Fonts */
 @font-face {
     font-family: 'JetBrainsMono';
-    src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@2.242/fonts/webfonts/JetBrainsMono-Regular.woff2') format('woff2'),
-        url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@2.242/fonts/ttf/JetBrainsMonoNL-Regular.ttf') format('truetype');
+    src: url('vendor/fonts/JetBrainsMono-Regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
 }
@@ -199,7 +280,7 @@ button:hover {
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local('Roboto'), local('Roboto-Regular'), url(https://fonts.gstatic.com/s/roboto/v20/KFOmCnqEu92Fr1Mu4mxK.woff2) format('woff2');
+    src: local('Roboto'), local('Roboto-Regular'), url('vendor/fonts/roboto-latin-400-normal.woff2') format('woff2');
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
         U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
